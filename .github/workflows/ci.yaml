@@ -22,3 +22,11 @@ jobs:
 
       - name: Build and run tests
         run: mvn clean verify
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: java
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
