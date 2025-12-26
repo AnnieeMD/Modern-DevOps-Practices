@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: modern-devops
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: modern-devops
+  template:
+    metadata:
+      labels:
+        app: modern-devops
+    spec:
+      containers:
+        - name: app
+          image: adermendzhieva/
+          modern-devops-practices:latest
+          ports:
+            - containerPort: 8080
