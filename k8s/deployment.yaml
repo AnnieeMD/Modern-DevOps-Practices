@@ -14,7 +14,6 @@ spec:
     spec:
       containers:
         - name: app
-          image: adermendzhieva/
-          modern-devops-practices:latest
+          image: adermendzhieva/modern-devops-practices:latest
           ports:
             - containerPort: 8080
