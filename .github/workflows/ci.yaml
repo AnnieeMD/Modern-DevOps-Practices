@@ -28,7 +28,7 @@ jobs:
          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: mvn sonar:sonar -Dsonar.projectKey=AnnieeMD_Modern-DevOps-Practices -Dsonar.organization=anidermendzhieva -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONAR_TOKEN
 
-      - name: Login to Docker Hub
+      - name: Docker login
         run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
       - name: Build Docker image
@@ -37,10 +37,11 @@ jobs:
       - name: Push Docker image
         run: docker push ${{ secrets.DOCKER_USERNAME }}/modern-devops-practices:latest
 
-      - name: Setup kind (Kubernetes in Docker)
-        uses: engineerd/setup-kind@v0.6.0
-        with:
-          version: "v0.24.0"
+      - name: Install kind
+        run: |
+          curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.24.0/kind-linux-amd64
+          chmod +x ./kind
+          sudo mv ./kind /usr/local/bin/kind
 
       - name: Create kind cluster
         run: kind create cluster --name modern-devops
@@ -48,7 +49,7 @@ jobs:
       - name: Load Docker image into kind
         run: kind load docker-image ${{ secrets.DOCKER_USERNAME }}/modern-devops-practices:latest --name modern-devops
 
-      - name: Deploy to Kubernetes
+      - name: Deploy
         run: |
           kubectl apply -f k8s/deployment.yaml
           kubectl apply -f k8s/service.yaml
