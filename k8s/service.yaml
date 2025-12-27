@@ -1,12 +1,11 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: modern-devops-service
+  name: modern-devops
 spec:
-  type: NodePort
+  type: ClusterIP
   selector:
     app: modern-devops
   ports:
-    - port : 8080
+    - port : 80
       targetPort: 8080
-      nodePort: 30007
