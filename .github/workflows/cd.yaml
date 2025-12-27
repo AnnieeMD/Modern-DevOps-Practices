@@ -1,0 +1,62 @@
+name: CD
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - "src/**"
+      - "Dockerfile"
+      - "k8s/**"
+      - ".github/workflows/cd.yml"
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Log in to Docker Hub
+        run: echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+
+      - name: Build Docker image
+        run: docker build -t $DOCKER_USERNAME/modern-devops-practices:latest .
+
+      - name: Push Docker image
+        run: docker push $DOCKER_USERNAME/modern-devops-practices:latest
+
+      - name: Create kind cluster
+        uses: helm/kind-action@e0a5f7c0e3e5c4b9a1d6f9a0e7b1b2c3d4f5a6b7
+        with:
+          cluster_name: modern-devops
+          wait: 120s
+
+      - name: Load image into kind
+        run: kind load docker-image $DOCKER_USERNAME/modern-devops-practices:latest --name modern-devops
+
+      - name: Deploy to Kubernetes
+        run: |
+          kubectl apply -f k8s/deployment.yaml
+          kubectl apply -f k8s/service.yaml
+
+      - name: Check rollout
+        run: |
+          kubectl rollout status deployment/modern-devops
+          kubectl get pods
+
+      - name: Smoke test /health endpoint
+        run: |
+          kubectl port-forward svc/modern-devops 8080:80 &
+          PF_PID=$!
+          sleep 5
+          curl -f http://localhost:8080/actuator/health
+          kill $PF_PID
