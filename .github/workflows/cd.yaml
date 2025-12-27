@@ -35,7 +35,7 @@ jobs:
         run: docker push $DOCKER_USERNAME/modern-devops-practices:latest
 
       - name: Create kind cluster
-        uses: helm/kind-action@e0a5f7c0e3e5c4b9a1d6f9a0e7b1b2c3d4f5a6b7
+        uses: helm/kind-action@v1.12.0
         with:
           cluster_name: modern-devops
           wait: 120s
