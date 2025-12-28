@@ -40,6 +40,15 @@ jobs:
       - name: Build Docker image
         run: docker build -t $DOCKER_USERNAME/modern-devops-practices:latest .
 
+      - name: Trivy image scan
+        uses: aquasecurity/trivy-action@6c175e9c4083a92bbca2f9724c8a5e33bc2d97a5
+        with:
+          image-ref: $DOCKER_USERNAME/modern-devops-practices:latest
+          severity: CRITICAL,HIGH
+          vuln-type: os,library
+          ignore-unfixed: true
+          exit-code: 1
+
       - name: Push Docker image
         run: docker push $DOCKER_USERNAME/modern-devops-practices:latest
 
