@@ -1,0 +1,16 @@
+# Git
+.git
+.gitignore
+
+# CI/CD
+.github
+
+# Maven build artifacts
+target/
+
+# IntelliJ IDEA
+.idea
+*.iml
+
+# OS files
+Thumbs.db
