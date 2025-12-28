@@ -5,9 +5,6 @@
 # CI/CD
 .github
 
-# Maven build artifacts
-target/
-
 # IntelliJ IDEA
 .idea
 *.iml
