@@ -3,11 +3,6 @@ name: CD
 on:
   push:
     branches: [ "main" ]
-    paths:
-      - "src/**"
-      - "Dockerfile"
-      - "k8s/**"
-      - ".github/workflows/cd.yml"
 
 permissions:
   contents: read
