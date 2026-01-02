@@ -34,6 +34,22 @@ class PersonTest {
     }
 
     @Test
+    void givenNameOnlyConstructor_whenCreated_thenHasDefaultIdAndProvidedName() {
+        Person person = new Person(JOHN_DOE);
+        assertEquals(DEFAULT_ID, person.getId());
+        assertEquals(JOHN_DOE, person.getName());
+    }
+
+    @Test
+    void givenPerson_whenSetId_thenIdIsUpdated() {
+        Person person = new Person();
+        
+        person.setId(TEST_ID_42);
+        
+        assertEquals(TEST_ID_42, person.getId());
+    }
+
+    @Test
     void givenPerson_whenGetId_thenReturnCorrectId() {
         Person person = createPerson(TEST_ID_42, TEST_PERSON);
 

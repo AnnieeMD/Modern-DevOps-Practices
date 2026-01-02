@@ -42,6 +42,26 @@ class PersonServiceTest {
     }
 
     @Test
+    void givenEmptyRepository_whenInitData_thenCreatesTwoDefaultPersons() {
+        when(personRepository.count()).thenReturn(0L);
+        
+        personService.initData();
+        
+        verify(personRepository).count();
+        verify(personRepository, times(2)).save(any(Person.class));
+    }
+
+    @Test
+    void givenRepositoryHasData_whenInitData_thenDoesNotCreateAdditionalPersons() {
+        when(personRepository.count()).thenReturn(2L);
+        
+        personService.initData();
+        
+        verify(personRepository).count();
+        verify(personRepository, never()).save(any(Person.class));
+    }
+
+    @Test
     void givenNewService_whenConstructed_thenInitializesWithTwoPeople() {
         when(personRepository.findAll()).thenReturn(List.of(personOne, personTwo));
         
