@@ -17,15 +17,29 @@ spec:
           image: adermendzhieva/modern-devops-practices:latest
           ports:
             - containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: postgres-config
+            - secretRef:
+                name: postgres-secret
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:postgresql://postgres:5432/$(POSTGRES_DB)
+            - name: SPRING_DATASOURCE_USERNAME
+              value: $(POSTGRES_USER)
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: $(POSTGRES_PASSWORD)
+            - name: SPRING_JPA_HIBERNATE_DDL_AUTO
+              value: update
           readinessProbe:
             httpGet:
               path: /actuator/health
               port: 8080
-            initialDelaySeconds: 10
+            initialDelaySeconds: 20
             periodSeconds: 5
           livenessProbe:
             httpGet:
               path: /actuator/health
               port: 8080
-            initialDelaySeconds: 20
+            initialDelaySeconds: 30
             periodSeconds: 10

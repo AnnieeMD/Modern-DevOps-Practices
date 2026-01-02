@@ -1,0 +1,8 @@
+# EXAMPLE FILE - FOR REFERENCE ONLY
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-config
+data:
+  POSTGRES_DB: "example_db"
