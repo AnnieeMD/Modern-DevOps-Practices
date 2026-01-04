@@ -2,6 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: modern-devops
+  namespace: modern-devops
 spec:
   type: ClusterIP
   selector:

@@ -62,32 +62,37 @@ jobs:
           POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
           POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
         run: |
+          # Create namespace
+          kubectl apply -f k8s/namespace.yaml
+          
           # Create ConfigMap with real database name from GitHub Secrets
           kubectl create configmap postgres-config \
             --from-literal=POSTGRES_DB=$POSTGRES_DB \
+            --namespace=modern-devops \
             --dry-run=client -o yaml | kubectl apply -f -
           
           # Create Secret with real credentials from GitHub Secrets
           kubectl create secret generic postgres-secret \
             --from-literal=POSTGRES_USER=$POSTGRES_USER \
             --from-literal=POSTGRES_PASSWORD=$POSTGRES_PASSWORD \
+            --namespace=modern-devops \
             --dry-run=client -o yaml | kubectl apply -f -
           
           # Deploy PostgreSQL
           kubectl apply -f k8s/postgres-deployment.yaml -f k8s/postgres-service.yaml
-          kubectl wait --for=condition=ready pod -l app=postgres --timeout=60s
+          kubectl wait --for=condition=ready pod -l app=postgres --namespace=modern-devops --timeout=60s
           
           # Deploy application
           kubectl apply -f k8s/deployment.yaml -f k8s/service.yaml
 
       - name: Check rollout
         run: |
-          kubectl rollout status deployment/modern-devops
-          kubectl get pods
+          kubectl rollout status deployment/modern-devops --namespace=modern-devops
+          kubectl get pods --namespace=modern-devops
 
       - name: Smoke test /health endpoint
         run: |
-          kubectl port-forward svc/modern-devops 8080:80 &
+          kubectl port-forward svc/modern-devops 8080:80 --namespace=modern-devops &
           PF_PID=$!
           sleep 5
           curl -f http://localhost:8080/actuator/health
