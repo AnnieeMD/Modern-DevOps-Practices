@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: modern-devops
+  namespace: modern-devops
 spec:
   replicas: 2
   selector:
@@ -24,7 +25,7 @@ spec:
                 name: postgres-secret
           env:
             - name: SPRING_DATASOURCE_URL
-              value: jdbc:postgresql://postgres:5432/$(POSTGRES_DB)
+              value: jdbc:postgresql://postgres.modern-devops.svc.cluster.local:5432/$(POSTGRES_DB)
             - name: SPRING_DATASOURCE_USERNAME
               value: $(POSTGRES_USER)
             - name: SPRING_DATASOURCE_PASSWORD
@@ -43,3 +44,4 @@ spec:
               port: 8080
             initialDelaySeconds: 30
             periodSeconds: 10
+
