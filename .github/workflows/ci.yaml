@@ -51,7 +51,7 @@ jobs:
           restore-keys: ${{ runner.os }}-sonar
 
       - name: Build for Sonar
-        run: mvn clean verify -DskipTests
+        run: mvn clean verify
 
       - name: Sonar Scan
         env:
