@@ -12,6 +12,10 @@ jobs:
       contents: read
       packages: write
 
+    env:
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -34,14 +38,14 @@ jobs:
       - name: Trivy image scan
         uses: aquasecurity/trivy-action@6c175e9c4083a92bbca2f9724c8a5e33bc2d97a5
         with:
-          image-ref: ${{ secrets.DOCKER_USERNAME }}/modern-devops-practices:latest
+          image-ref: ${{ env.DOCKER_USERNAME }}/modern-devops-practices:latest
           severity: CRITICAL,HIGH
           vuln-type: os,library
           ignore-unfixed: true
           exit-code: 1
 
       - name: Push Docker image
-        run: docker push ${{ secrets.DOCKER_USERNAME }}/modern-devops-practices:latest
+        run: docker push $DOCKER_USERNAME/modern-devops-practices:latest
 
   deploy-to-kubernetes-and-test:
     name: Deploy to Kubernetes & Smoke Test
